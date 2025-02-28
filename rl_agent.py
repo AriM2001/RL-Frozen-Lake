@@ -46,13 +46,15 @@ class RLAgent:
         Returns:
             int: The chosen action.
         """
-        if random.random() < self.epsilon:
+        #print(self.Q)
+        if random.uniform(0, 1) < self.epsilon:
             # Choose a random action.
+            # '-1' because it will get an error for out of bounds
             return random.randint(0, self.action_space_size - 1)
         else:
+            #print(self.Q[state])
             # Choose the best action according to the Q-table.
-            return np.argmax(self.Q[state])       
-
+            return int(np.argmax(self.Q[state]))   
         # raise NotImplementedError("This method is not implemented yet.")
     
     def learn_q_learning(self, state, action, reward, next_state, done):
