@@ -50,18 +50,18 @@ class RLAgent:
             int: The chosen action.
         """
         #print(self.Q)
-        '''
-
-        '''
+        # random.uniform obtains random float number between 0 and 1
         if random.uniform(0, 1) < self.epsilon:
             # Choose a random action.
             # '-1' because it will get an error for out of bounds
             # Exploration
+            # random.randint obtains random integer number between 0 and action_space_size - 1
             return random.randint(0, self.action_space_size - 1)
         else:
             # print(self.Q[state])
             # Choose the best action according to the Q-table.
             # Exploitation
+            # obtains the best action for the current state
             return int(np.argmax(self.Q[state]))   
     
     def learn_q_learning(self, state, action, reward, next_state, done):
@@ -77,11 +77,12 @@ class RLAgent:
             next_state (int): The next state after taking the action.
             done (bool): True if the episode has ended.
         """
+        # Our current state action value
         current_qvalue = self.Q[state][action]
+        # Get the max expected future reward of next_state
         future_estimate = np.max(self.Q[next_state])
-        self.Q[state, action] += self.lr * (reward + self.gamma * future_estimate - current_qvalue)
-
-        #raise NotImplementedError("This method is not implemented yet.")
+        # Update state action value
+        self.Q[state][action] = current_qvalue + self.lr * (reward + self.gamma * future_estimate - current_qvalue)
     
     def learn_sarsa(self, state, action, reward, next_state, next_action, done):
         """
@@ -97,9 +98,12 @@ class RLAgent:
             next_action (int): The next action chosen by the agent.
             done (bool): True if the episode has ended.
         """
+        #Current state action value
         current_qvalue = self.Q[state][action]
-        future_estimate = self.Q[next_state][next_action]
-        self.Q[state, action] += self.lr * (reward + self.gamma * future_estimate - current_qvalue)
+        #Takes action of next state chosen
+        future_estimate = self.Q[next_state, next_action]
+        #SARSA update rule
+        self.Q[state][action] = current_qvalue + self.lr * (reward + self.gamma * future_estimate - current_qvalue) 
 
     def update_exploration_rate(self):
         """
